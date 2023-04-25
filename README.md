@@ -15,7 +15,8 @@ Express handlers for the strava webhook API.
    app.use(
      "/webhook",
      StravaHandlers({
-       // Specify the verify token that will be provided when creating the webhook subscription.
+       // Specify the verify token that will be provided when creating the
+       // webhook subscription.
        verify_token: "STRAVA",
 
        // Register handlers for webhook events. We're only handling activity
@@ -23,7 +24,8 @@ Express handlers for the strava webhook API.
        activity_create_handler: (data: ActivityCreateData) =>
          console.log(`activity_create_handler here, handling activity: ${data.object_id}`),
 
-       // Optional: Enable logging by providing a `(s: string) => void` callback.
+       // Optional: Enable logging by providing a `(s: string) => void`
+       // callback.
        logger: console.log,
      })
    );
