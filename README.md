@@ -1,7 +1,7 @@
 # express-strava
 
-![build](https://github.com/markbradley27/express-strava/workflows/build/badge.svg)
-![test](https://github.com/markbradley27/express-strava/workflows/test/badge.svg)
+[![build](https://github.com/markbradley27/express-strava/workflows/build/badge.svg)](https://github.com/markbradley27/express-strava/actions/workflows/build.yaml)
+[![test](https://github.com/markbradley27/express-strava/workflows/test/badge.svg)](https://github.com/markbradley27/express-strava/actions/workflows/test.yaml)
 
 Express handlers for the strava webhook API.
 
