@@ -6,7 +6,7 @@
   "main": "lib/index.js",
   "files": ["lib"],
   "scripts": {
-    "build": "npm-run-all clean tsc",
+    "build": "npm-run-all clean lint tsc",
     "clean": "rimraf lib",
     "lint": "eslint . --ext .ts",
     "test": "mocha",
