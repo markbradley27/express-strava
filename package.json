@@ -1,7 +1,9 @@
 {
   "name": "express-strava",
+  "version": "1.0.0",
   "description": "Express handlers for the Strava webhook API.",
   "main": "lib/index.js",
+  "files": ["lib"],
   "scripts": {
     "build": "npm-run-all clean tsc",
     "clean": "rimraf lib",
