@@ -75,7 +75,7 @@ export function StravaHandlers(opts: StravaHandlersOptions) {
           }
           default: {
             log_tmpl("unexpected aspect type");
-            res.sendStatus(400);
+            res.sendStatus(403);
             return;
           }
         }
@@ -97,7 +97,7 @@ export function StravaHandlers(opts: StravaHandlersOptions) {
           }
           default: {
             log_tmpl("unexpected aspect type");
-            res.sendStatus(400);
+            res.sendStatus(403);
             return;
           }
         }
@@ -105,7 +105,7 @@ export function StravaHandlers(opts: StravaHandlersOptions) {
       }
       default: {
         log_tmpl("unexpected object type");
-        res.sendStatus(400);
+        res.sendStatus(403);
         return;
       }
     }
@@ -131,7 +131,6 @@ export function StravaHandlers(opts: StravaHandlersOptions) {
           ${(error as Error).message}`
       );
       res.sendStatus(500);
-      throw error;
     }
   });
 
