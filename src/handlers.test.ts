@@ -8,7 +8,7 @@ import chaiHttp from "chai-http";
 import express from "express";
 import sinon from "sinon";
 import sinonChai from "sinon-chai";
-import { StravaHandlers } from ".";
+import StravaHandlers from "./handlers";
 
 chai.use(chaiHttp);
 chai.use(sinonChai);

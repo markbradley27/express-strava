@@ -1,5 +1,5 @@
 // TODO: Need to make sure these types are all correct.
-export type BaseData = {
+type BaseData = {
   event_time: number;
   object_id: number;
   owner_id: number;
