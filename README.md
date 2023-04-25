@@ -1,6 +1,9 @@
 # express-strava
 Express handlers for the strava webhook API.
 
+![build](https://github.com/markbradley27/express-strava/workflows/build/badge.svg)
+![test](https://github.com/markbradley27/express-strava/workflows/test/badge.svg)
+
 ## Quickstart
 
 1. The following code will spin up an express server that handles strava webhooks:
