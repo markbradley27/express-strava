@@ -27,10 +27,6 @@ Express handlers for the strava webhook API.
        // creation here, but you can register handlers for all event types.
        activity_create_handler: (data: ActivityCreateData) =>
          console.log(`activity_create_handler here, handling activity: ${data.object_id}`),
-
-       // Optional: Enable logging by providing a `(s: string) => void`
-       // callback.
-       logger: console.log,
      })
    );
 
@@ -40,10 +36,10 @@ Express handlers for the strava webhook API.
    });
    ```
 
-1. Fire it up and it should start listening:
+1. Fire it up (with debug output) and it should start listening:
 
    ```bash
-   $ ts-node server.ts
+   $ DEBUG=express-strava:* ts-node server.ts
    Listening on port: 8080
    ```
 
@@ -56,7 +52,7 @@ Express handlers for the strava webhook API.
    like this:
 
    ```
-   strava webhook get: echoing challenge; {"hub.verify_token":"STRAVA","hub.challenge":"80292665ca052d4e","hub.mode":"subscribe"}    
+   express-strava:get echoing challenge; {"hub.verify_token":"STRAVA","hub.challenge":"80292665ca052d4e","hub.mode":"subscribe"} +0ms
    ```
 
 1. Go do something cool and post it to Strava! Once you're done, you should see
@@ -64,6 +60,6 @@ Express handlers for the strava webhook API.
    handler:
 
    ```
-   strava webhook post: dispatching to activity_create_handler; {"aspect_type":"create","event_time":1682391474,"object_id":1234567890,"object_type":"activity","owner_id":2222222,"subscription_id":333333,"updates":{}}
+   express-strava:post dispatching to activity_create_handler; {"aspect_type":"create","event_time":1682391474,"object_id":1234567890,"object_type":"activity","owner_id":2222222,"subscription_id":333333,"updates":{}} +0ms
    activity_create_handler here, handling activity: 1234567890
    ```

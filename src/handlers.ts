@@ -8,6 +8,7 @@ import {
   AthleteUpdateData,
   WebhookData,
 } from "./types";
+import debugg from "debug";
 
 type HandlerReturn = Promise<void> | void;
 
@@ -19,7 +20,6 @@ interface StravaHandlersOptions {
   activity_create_handler?: (data: ActivityCreateData) => HandlerReturn;
   activity_update_handler?: (data: ActivityUpdateData) => HandlerReturn;
   activity_delete_handler?: (data: ActivityDeleteData) => HandlerReturn;
-  logger?: (msg: string) => void;
 }
 
 export default function StravaHandlers(opts: StravaHandlersOptions) {
@@ -28,11 +28,8 @@ export default function StravaHandlers(opts: StravaHandlersOptions) {
   router.use(express.json());
 
   router.get("/", (req: express.Request, res: express.Response) => {
-    const log_tmpl = (suffix: string) => {
-      opts.logger &&
-        opts.logger(
-          `strava webhook get: ${suffix}; ${JSON.stringify(req.query)}`
-        );
+    const debug = (msg: string) => {
+      debugg("express-strava:get")(`${msg}; ${JSON.stringify(req.query)}`);
     };
 
     const mode = req.query["hub.mode"];
@@ -40,21 +37,18 @@ export default function StravaHandlers(opts: StravaHandlersOptions) {
     const verify_token = req.query["hub.verify_token"];
 
     if (mode !== "subscribe" || verify_token !== opts.verify_token) {
-      log_tmpl("bad mode or verify token");
+      debug("bad mode or verify token");
       res.sendStatus(403);
       return;
     }
 
-    log_tmpl("echoing challenge");
+    debug("echoing challenge");
     res.json({ "hub.challenge": challenge });
   });
 
   router.post("/", (req: express.Request, res: express.Response) => {
-    const log_tmpl = (suffix: string) => {
-      opts.logger &&
-        console.log(
-          `strava webhook post: ${suffix}; ${JSON.stringify(req.body)}`
-        );
+    const debug = (msg: string) => {
+      debugg("express-strava:post")(`${msg}; ${JSON.stringify(req.body)}`);
     };
 
     const data = req.body as WebhookData;
@@ -76,7 +70,7 @@ export default function StravaHandlers(opts: StravaHandlersOptions) {
             break;
           }
           default: {
-            log_tmpl("unexpected aspect type");
+            debug("unexpected aspect type");
             res.sendStatus(403);
             return;
           }
@@ -98,7 +92,7 @@ export default function StravaHandlers(opts: StravaHandlersOptions) {
             break;
           }
           default: {
-            log_tmpl("unexpected aspect type");
+            debug("unexpected aspect type");
             res.sendStatus(403);
             return;
           }
@@ -106,14 +100,14 @@ export default function StravaHandlers(opts: StravaHandlersOptions) {
         break;
       }
       default: {
-        log_tmpl("unexpected object type");
+        debug("unexpected object type");
         res.sendStatus(403);
         return;
       }
     }
 
     if (handler === undefined) {
-      log_tmpl(
+      debug(
         `no ${data.object_type}_${data.aspect_type}_handler to dispatch to`
       );
       res.sendStatus(200);
@@ -121,7 +115,7 @@ export default function StravaHandlers(opts: StravaHandlersOptions) {
     }
 
     const handle_error = (error: unknown) => {
-      log_tmpl(
+      debug(
         `${data.object_type}_${data.aspect_type}_handler threw an error: \
           ${(error as Error).message}`
       );
@@ -129,9 +123,7 @@ export default function StravaHandlers(opts: StravaHandlersOptions) {
     };
 
     try {
-      log_tmpl(
-        `dispatching to ${data.object_type}_${data.aspect_type}_handler`
-      );
+      debug(`dispatching to ${data.object_type}_${data.aspect_type}_handler`);
       const result = handler();
       if (result == null) {
         res.sendStatus(200);
