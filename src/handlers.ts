@@ -9,14 +9,16 @@ import {
   WebhookData,
 } from "./types";
 
+type HandlerReturn = Promise<void> | void;
+
 interface StravaHandlersOptions {
   verify_token: string;
-  athlete_create_handler?: (data: AthleteCreateData) => void;
-  athlete_update_handler?: (data: AthleteUpdateData) => void;
-  athlete_delete_handler?: (data: AthleteDeleteData) => void;
-  activity_create_handler?: (data: ActivityCreateData) => void;
-  activity_update_handler?: (data: ActivityUpdateData) => void;
-  activity_delete_handler?: (data: ActivityDeleteData) => void;
+  athlete_create_handler?: (data: AthleteCreateData) => HandlerReturn;
+  athlete_update_handler?: (data: AthleteUpdateData) => HandlerReturn;
+  athlete_delete_handler?: (data: AthleteDeleteData) => HandlerReturn;
+  activity_create_handler?: (data: ActivityCreateData) => HandlerReturn;
+  activity_update_handler?: (data: ActivityUpdateData) => HandlerReturn;
+  activity_delete_handler?: (data: ActivityDeleteData) => HandlerReturn;
   logger?: (msg: string) => void;
 }
 
@@ -57,7 +59,7 @@ export default function StravaHandlers(opts: StravaHandlersOptions) {
 
     const data = req.body as WebhookData;
 
-    let handler: { (): void } | undefined = undefined;
+    let handler: { (): HandlerReturn } | undefined = undefined;
     switch (data.object_type) {
       case "athlete": {
         switch (data.aspect_type) {
@@ -118,19 +120,26 @@ export default function StravaHandlers(opts: StravaHandlersOptions) {
       return;
     }
 
-    try {
-      log_tmpl(
-        `dispatching to ${data.object_type}_${data.aspect_type}_handler`
-      );
-      handler();
-      res.sendStatus(200);
-      return;
-    } catch (error) {
+    const handle_error = (error: unknown) => {
       log_tmpl(
         `${data.object_type}_${data.aspect_type}_handler threw an error: \
           ${(error as Error).message}`
       );
       res.sendStatus(500);
+    };
+
+    try {
+      log_tmpl(
+        `dispatching to ${data.object_type}_${data.aspect_type}_handler`
+      );
+      const result = handler();
+      if (result == null) {
+        res.sendStatus(200);
+        return;
+      }
+      result.then(() => res.sendStatus(200)).catch(handle_error);
+    } catch (error) {
+      handle_error(error);
     }
   });
 

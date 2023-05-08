@@ -106,11 +106,66 @@ describe("StravaHandlers", () => {
       expect(res).to.have.status(200);
     });
 
-    it("returns 500 if handler throws an error", async () => {
+    it("returns 200 if synchronous handler returns", async () => {
       app.use(
         StravaHandlers({
           verify_token: "doesn't matter",
           athlete_create_handler: () => {
+            return;
+          },
+        })
+      );
+
+      const data = valid_data;
+      data.object_type = "athlete";
+      data.aspect_type = "create";
+      const res = await request(app).post("/").send(valid_data);
+
+      expect(res).to.have.status(200);
+    });
+
+    it("returns 200 if asynchronous handler returns", async () => {
+      app.use(
+        StravaHandlers({
+          verify_token: "doesn't matter",
+          athlete_create_handler: () => {
+            return Promise.resolve();
+          },
+        })
+      );
+
+      const data = valid_data;
+      data.object_type = "athlete";
+      data.aspect_type = "create";
+      const res = await request(app).post("/").send(valid_data);
+
+      expect(res).to.have.status(200);
+    });
+
+    it("returns 500 if synchronous handler throws an error", async () => {
+      app.use(
+        StravaHandlers({
+          verify_token: "doesn't matter",
+          athlete_create_handler: () => {
+            throw Error("nope!");
+          },
+        })
+      );
+
+      const data = valid_data;
+      data.object_type = "athlete";
+      data.aspect_type = "create";
+      const res = await request(app).post("/").send(valid_data);
+
+      expect(res).to.have.status(500);
+    });
+
+    it("returns 500 if asynchronous handler throws an error", async () => {
+      app.use(
+        StravaHandlers({
+          verify_token: "doesn't matter",
+          // eslint-disable-next-line @typescript-eslint/require-await
+          athlete_create_handler: async () => {
             throw Error("nope!");
           },
         })
