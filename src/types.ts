@@ -1,4 +1,3 @@
-// TODO: Need to make sure these types are all correct.
 type ActivityObjectType = "activity";
 type AthleteObjectType = "athlete";
 export type ObjectType = ActivityObjectType | AthleteObjectType;
@@ -29,6 +28,12 @@ type CreateData = BaseData & {
 
 type UpdateData = BaseData & {
   aspect_type: UpdateAspectType;
+  updates: {
+    private?: "true" | "false";
+    title?: string;
+    type?: string;
+    visibility?: "everyone" | "followers_only" | "only_me";
+  };
 };
 
 type DeleteData = BaseData & {
@@ -40,15 +45,7 @@ export type AthleteUpdateData = AthleteData & UpdateData;
 export type AthleteDeleteData = AthleteData & DeleteData;
 
 export type ActivityCreateData = ActivityData & CreateData;
-export type ActivityUpdateData = ActivityData &
-  UpdateData & {
-    updates: {
-      private?: "true" | "false";
-      title?: string;
-      type?: string;
-      visibility?: "everyone" | "followers_only" | "only_me";
-    };
-  };
+export type ActivityUpdateData = ActivityData & UpdateData;
 export type ActivityDeleteData = ActivityData & DeleteData;
 
 export type WebhookData =
